@@ -35,10 +35,10 @@ function UsernameForm({onSubmitUsername}) {
     <form onSubmit={onSubmit}>
       <div>
        {/* 🐨 make sure to associate the label to the input. */}
-        <label htmlFor='username-label'>Username:</label>
-        <input style={{marginLeft: 8}} id='username-input' type="text" ref={inputRef} onChange={validateCasing} value={username} placeholder='lowercase username' />
+        <label htmlFor='username'>Username:</label>
+        <input style={{marginLeft: 8}} id='username' type="text" ref={inputRef} onChange={validateCasing} value={username} placeholder='lowercase username' />
       </div>
-      {error ? <div id='error-message' style={{color: 'red'}}>{error}</div> : <div style={{margin: 14}}></div>}
+      {error ? <div id='error-message' role="alert" style={{color: 'red'}}>{error}</div> : <div style={{margin: 14}}></div>}
       <button type="submit">Submit</button>
     </form>
   )
