@@ -4,27 +4,41 @@
 import * as React from 'react'
 
 function UsernameForm({onSubmitUsername}) {
+  // 💯 using refs
+  const inputRef = React.useRef();
+
+  const [error, setError] = React.useState(null);
+  const [username, setUsername] = React.useState('');
+
+  // 💯 validate lower-case
+  const validateCasing = (event) => {
+    const {value} = event.target;
+    const isLowerCase = (value) => value === value.toLowerCase();
+    setError(isLowerCase(value) ? null : 'Username must be lower case');
+    // 💯 control the input value
+    setUsername(value.toLowerCase());
+  }
+
   // 🐨 add a submit event handler here (`handleSubmit`).
-  // 💰 Make sure to accept the `event` as an argument and call
-  // `event.preventDefault()` to prevent the default behavior of form submit
-  // events (which refreshes the page).
-  // 📜 https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
-  //
-  // 🐨 get the value from the username input (using whichever method
-  // you prefer from the options mentioned in the instructions)
-  // 💰 For example: event.target.elements[0].value
-  // 🐨 Call `onSubmitUsername` with the value of the input
+  const onSubmit = (event) => {
+    // 💰 Make sure to accept the `event` as an argument and call
+    event.preventDefault();
+    // 🐨 get the value from the username input
+    const value = inputRef.current.value;
+    // 🐨 Call `onSubmitUsername` with the value of the input
+    onSubmitUsername(value);
 
-  // 🐨 add the onSubmit handler to the <form> below
+  }
 
-  // 🐨 make sure to associate the label to the input.
-  // to do so, set the value of 'htmlFor' prop of the label to the id of input
+  // 🐨 add the onSubmit handler to the <form> below 
   return (
-    <form>
+    <form onSubmit={onSubmit}>
       <div>
-        <label>Username:</label>
-        <input type="text" />
+       {/* 🐨 make sure to associate the label to the input. */}
+        <label htmlFor='username-label'>Username:</label>
+        <input style={{marginLeft: 8}} id='username-input' type="text" ref={inputRef} onChange={validateCasing} value={username} placeholder='lowercase username' />
       </div>
+      {error ? <div id='error-message' style={{color: 'red'}}>{error}</div> : <div style={{margin: 14}}></div>}
       <button type="submit">Submit</button>
     </form>
   )
