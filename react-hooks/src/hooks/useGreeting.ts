@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react'
 // 💯 Exercise 2 - custom hook
 
-const useGreeting = (defaultValue: string) => {
+const useGreeting = (defaultValue?: string) => {
   // 💯 lazy state initialization
-  const getNameFromLocalStorage = () =>
-    window.localStorage.getItem('name') ?? defaultValue
+  const localStorageValue: string | null =
+    defaultValue ?? window.localStorage.getItem('name')
 
-  // 🐨 initialize the state to the value from localStorage
-  const [name, setName] = useState<string>(getNameFromLocalStorage)
+  const [name, setName] = useState<string | null>(localStorageValue)
 
-  // 🐨 Here's where you'll use `React.useEffect`.
   useEffect(() => {
-    window.localStorage.setItem('name', name)
+    if (name) {
+      window.localStorage.setItem('name', name)
+    }
     // 💯 effect dependencies
   }, [name])
 
