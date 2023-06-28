@@ -1,28 +1,33 @@
 // useState: greeting
 
-import * as React from 'react'
+import React, { ChangeEvent, useState } from 'react'
 
-function Greeting() {
-  // 💣 delete this variable declaration and replace it with a React.useState call
-  const name = ''
+interface GreetingProps {
+  initialName?: string
+}
 
-  function handleChange(event) {
+const Greeting = ({ initialName = '' }: GreetingProps) => {
+  const [name, setName] = useState<string>(initialName)
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // 🐨 update the name here based on event.target.value
+    setName(event.target.value)
   }
 
   return (
     <div>
       <form>
         <label htmlFor="name">Name: </label>
-        <input onChange={handleChange} id="name" />
+        <input value={name} onChange={handleChange} id="name" />
       </form>
-      {name ? <strong>Hello {name}</strong> : 'Please type your name'}
+      {name ? <strong>Hello {name}</strong> : 'Please type your name above'}
     </div>
   )
 }
 
-function App() {
-  return <Greeting />
+const App = () => {
+  // 💯 accept an initialName prop and use that to initialize the state
+  return <Greeting initialName="My Name" />
 }
 
 export default App
