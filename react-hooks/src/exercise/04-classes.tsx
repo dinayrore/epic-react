@@ -13,27 +13,28 @@ import * as React from 'react'
 class Board extends React.Component {
   state = {
     squares:
-      JSON.parse(window.localStorage.getItem('squares')) || Array(9).fill(null),
+      JSON.parse(window.localStorage.getItem('squares') as string) ||
+      Array(9).fill(null),
   }
 
-  selectSquare(square) {
-    const {squares} = this.state
+  selectSquare(square: any) {
+    const { squares } = this.state
     const nextValue = calculateNextValue(squares)
     if (calculateWinner(squares) || squares[square]) {
       return
     }
     const squaresCopy = [...squares]
     squaresCopy[square] = nextValue
-    this.setState({squares: squaresCopy})
+    this.setState({ squares: squaresCopy })
   }
-  renderSquare = i => (
+  renderSquare = (i: any) => (
     <button className="square" onClick={() => this.selectSquare(i)}>
       {this.state.squares[i]}
     </button>
   )
 
   restart = () => {
-    this.setState({squares: Array(9).fill(null)})
+    this.setState({ squares: Array(9).fill(null) })
     this.updateLocalStorage()
   }
 
@@ -41,7 +42,7 @@ class Board extends React.Component {
     this.updateLocalStorage()
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: any, prevState: any) {
     if (prevState.squares !== this.state.squares) {
       this.updateLocalStorage()
     }
@@ -52,7 +53,7 @@ class Board extends React.Component {
   }
 
   render() {
-    const {squares} = this.state
+    const { squares } = this.state
     const nextValue = calculateNextValue(squares)
     const winner = calculateWinner(squares)
     let status = calculateStatus(winner, squares, nextValue)
@@ -93,7 +94,7 @@ function Game() {
   )
 }
 
-function calculateStatus(winner, squares, nextValue) {
+function calculateStatus(winner: any, squares: any, nextValue: any) {
   return winner
     ? `Winner: ${winner}`
     : squares.every(Boolean)
@@ -101,11 +102,11 @@ function calculateStatus(winner, squares, nextValue) {
     : `Next player: ${nextValue}`
 }
 
-function calculateNextValue(squares) {
+function calculateNextValue(squares: any) {
   return squares.filter(Boolean).length % 2 === 0 ? 'X' : 'O'
 }
 
-function calculateWinner(squares) {
+function calculateWinner(squares: any) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],

@@ -6,9 +6,14 @@ import * as React from 'react'
 // fetchPokemon: the function we call to get the pokemon info
 // PokemonInfoFallback: the thing we show while we're loading the pokemon info
 // PokemonDataView: the stuff we use to display the pokemon info
-import {PokemonForm} from '../pokemon'
+import { PokemonForm } from '../pokemon'
 
-function PokemonInfo({pokemonName}) {
+interface PokemonInfoProps {
+  pokemonName: string
+}
+
+function PokemonInfo({ pokemonName }: PokemonInfoProps) {
+  console.log(pokemonName)
   // 🐨 Have state for the pokemon (null)
   // 🐨 use React.useEffect where the callback should be called whenever the
   // pokemon name changes.
@@ -32,7 +37,7 @@ function PokemonInfo({pokemonName}) {
 function App() {
   const [pokemonName, setPokemonName] = React.useState('')
 
-  function handleSubmit(newPokemonName) {
+  function handleSubmit(newPokemonName: string) {
     setPokemonName(newPokemonName)
   }
 
@@ -41,7 +46,7 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <PokemonInfo pokemonName={pokemonName} />
+        {/* <PokemonInfo pokemonName={pokemonName} /> */}
       </div>
     </div>
   )

@@ -1,13 +1,20 @@
 import * as React from 'react'
-import {ErrorBoundary} from 'react-error-boundary'
+import { ChangeEvent, FormEvent } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import {
+  ErrorFallbackProps,
+  Pokemon,
+  PokemonDataViewProps,
+  PokemonFormProps,
+} from 'types'
 
-const formatDate = date =>
+const formatDate = (date: Date) =>
   `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${String(
     date.getSeconds(),
   ).padStart(2, '0')}.${String(date.getMilliseconds()).padStart(3, '0')}`
 
 // the delay argument is for faking things out a bit
-function fetchPokemon(name, delay = 1500) {
+function fetchPokemon(name: string, delay = '1500') {
   const pokemonQuery = `
     query PokemonInfo($name: String) {
       pokemon(name: $name) {
@@ -37,11 +44,11 @@ function fetchPokemon(name, delay = 1500) {
       },
       body: JSON.stringify({
         query: pokemonQuery,
-        variables: {name: name.toLowerCase()},
+        variables: { name: name.toLowerCase() },
       }),
     })
     .then(async response => {
-      const {data} = await response.json()
+      const { data } = await response.json()
       if (response.ok) {
         const pokemon = data?.pokemon
         if (pokemon) {
@@ -53,23 +60,25 @@ function fetchPokemon(name, delay = 1500) {
       } else {
         // handle the graphql errors
         const error = {
-          message: data?.errors?.map(e => e.message).join('\n'),
+          message: data?.errors
+            ?.map((event: { message: string }) => event.message)
+            .join('\n'),
         }
         return Promise.reject(error)
       }
     })
 }
 
-function PokemonInfoFallback({name}) {
+function PokemonInfoFallback(name: string) {
   const initialName = React.useRef(name).current
-  const fallbackPokemonData = {
+  const fallbackPokemonData: Pokemon = {
     name: initialName,
     number: 'XXX',
     image: '/img/pokemon/fallback-pokemon.jpg',
     attacks: {
       special: [
-        {name: 'Loading Attack 1', type: 'Type', damage: 'XX'},
-        {name: 'Loading Attack 2', type: 'Type', damage: 'XX'},
+        { name: 'Loading Attack 1', type: 'Type', damage: 'XX' },
+        { name: 'Loading Attack 2', type: 'Type', damage: 'XX' },
       ],
     },
     fetchedAt: 'loading...',
@@ -77,7 +86,7 @@ function PokemonInfoFallback({name}) {
   return <PokemonDataView pokemon={fallbackPokemonData} />
 }
 
-function PokemonDataView({pokemon}) {
+function PokemonDataView({ pokemon }: PokemonDataViewProps) {
   return (
     <div>
       <div className="pokemon-info__img-wrapper">
@@ -110,7 +119,7 @@ function PokemonForm({
   pokemonName: externalPokemonName,
   initialPokemonName = externalPokemonName || '',
   onSubmit,
-}) {
+}: PokemonFormProps) {
   const [pokemonName, setPokemonName] = React.useState(initialPokemonName)
 
   // this is generally not a great idea. We're synchronizing state when it is
@@ -120,21 +129,19 @@ function PokemonForm({
   React.useEffect(() => {
     // note that because it's a string value, if the externalPokemonName
     // is the same as the one we're managing, this will not trigger a re-render
-    if (typeof externalPokemonName === 'string') {
-      setPokemonName(externalPokemonName)
-    }
+    setPokemonName(externalPokemonName)
   }, [externalPokemonName])
 
-  function handleChange(e) {
-    setPokemonName(e.target.value)
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    setPokemonName(event.target.value)
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     onSubmit(pokemonName)
   }
 
-  function handleSelect(newPokemonName) {
+  function handleSelect(newPokemonName: string) {
     setPokemonName(newPokemonName)
     onSubmit(newPokemonName)
   }
@@ -185,17 +192,17 @@ function PokemonForm({
   )
 }
 
-function ErrorFallback({error, resetErrorBoundary}) {
+function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
   return (
     <div role="alert">
       There was an error:{' '}
-      <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+      <pre style={{ whiteSpace: 'normal' }}>{error.message}</pre>
       <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   )
 }
 
-function PokemonErrorBoundary(props) {
+function PokemonErrorBoundary(props: any) {
   return <ErrorBoundary FallbackComponent={ErrorFallback} {...props} />
 }
 

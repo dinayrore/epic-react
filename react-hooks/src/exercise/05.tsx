@@ -5,7 +5,11 @@ import * as React from 'react'
 // eslint-disable-next-line no-unused-vars
 import VanillaTilt from 'vanilla-tilt'
 
-function Tilt({children}) {
+interface TiltProps {
+  children: React.ReactNode
+}
+
+function Tilt({ children }: TiltProps) {
   // 🐨 create a ref here with React.useRef()
 
   // 🐨 add a `React.useEffect` callback here and use VanillaTilt to make your
