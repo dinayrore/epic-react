@@ -6,6 +6,7 @@ import {
   Pokemon,
   PokemonDataViewProps,
   PokemonFormProps,
+  PokemonInfoFallbackProps,
 } from 'types'
 
 const formatDate = (date: Date) =>
@@ -14,7 +15,7 @@ const formatDate = (date: Date) =>
   ).padStart(2, '0')}.${String(date.getMilliseconds()).padStart(3, '0')}`
 
 // the delay argument is for faking things out a bit
-function fetchPokemon(name: string, delay = '1500') {
+const fetchPokemon = (name: string, delay = '1500') => {
   const pokemonQuery = `
     query PokemonInfo($name: String) {
       pokemon(name: $name) {
@@ -69,7 +70,7 @@ function fetchPokemon(name: string, delay = '1500') {
     })
 }
 
-function PokemonInfoFallback(name: string) {
+const PokemonInfoFallback = ({ name }: PokemonInfoFallbackProps) => {
   const initialName = React.useRef(name).current
   const fallbackPokemonData: Pokemon = {
     name: initialName,
@@ -86,7 +87,7 @@ function PokemonInfoFallback(name: string) {
   return <PokemonDataView pokemon={fallbackPokemonData} />
 }
 
-function PokemonDataView({ pokemon }: PokemonDataViewProps) {
+const PokemonDataView = ({ pokemon }: PokemonDataViewProps) => {
   return (
     <div>
       <div className="pokemon-info__img-wrapper">
@@ -115,11 +116,11 @@ function PokemonDataView({ pokemon }: PokemonDataViewProps) {
   )
 }
 
-function PokemonForm({
+const PokemonForm = ({
   pokemonName: externalPokemonName,
   initialPokemonName = externalPokemonName || '',
   onSubmit,
-}: PokemonFormProps) {
+}: PokemonFormProps) => {
   const [pokemonName, setPokemonName] = React.useState(initialPokemonName)
 
   // this is generally not a great idea. We're synchronizing state when it is
@@ -132,16 +133,16 @@ function PokemonForm({
     setPokemonName(externalPokemonName)
   }, [externalPokemonName])
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setPokemonName(event.target.value)
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     onSubmit(pokemonName)
   }
 
-  function handleSelect(newPokemonName: string) {
+  const handleSelect = (newPokemonName: string) => {
     setPokemonName(newPokemonName)
     onSubmit(newPokemonName)
   }
@@ -192,7 +193,7 @@ function PokemonForm({
   )
 }
 
-function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
+const ErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => {
   return (
     <div role="alert">
       There was an error:{' '}
@@ -202,7 +203,7 @@ function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
   )
 }
 
-function PokemonErrorBoundary(props: any) {
+const PokemonErrorBoundary = (props: any) => {
   return <ErrorBoundary FallbackComponent={ErrorFallback} {...props} />
 }
 
@@ -212,4 +213,5 @@ export {
   PokemonDataView,
   fetchPokemon,
   PokemonErrorBoundary,
+  ErrorFallback,
 }

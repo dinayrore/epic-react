@@ -1,3 +1,5 @@
+import { Status } from './constants'
+
 export interface Pokemon {
   image: string
   name: string
@@ -16,6 +18,10 @@ export interface PokemonDataViewProps {
   pokemon: Pokemon
 }
 
+export interface PokemonInfoFallbackProps {
+  name: string
+}
+
 export interface PokemonFormProps {
   pokemonName: string
   onSubmit: (newPokemonName: string) => void
@@ -28,3 +34,9 @@ export interface ErrorFallbackProps {
 }
 
 export type TicTacToeSquares = 'X' | 'O'
+
+export interface PokemonState {
+  status: Status
+  pokemon: Pokemon | null
+  error: Error | null
+}
