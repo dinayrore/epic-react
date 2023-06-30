@@ -5,8 +5,13 @@ import * as React from 'react'
 
 function useMedia(query, initialState = false) {
   const [state, setState] = React.useState(initialState)
+  // 💯 use the format function
+  const formattedDebugValue = ({query, state}) => {
+    return `\`${query}\` => ${state}`
+  }
+  
   // 🐨 call React.useDebugValue here.
-  // 💰 here's the formatted label I use: `\`${query}\` => ${state}`
+  React.useDebugValue({query, state}, formattedDebugValue)
 
   React.useEffect(() => {
     let mounted = true
