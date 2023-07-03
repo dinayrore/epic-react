@@ -20,3 +20,12 @@ export const getTogglerProps = ({onClick, isOn, toggle, ...props} = {}) => {
     ...props,
   }
 }
+
+export const getResetterProps = ({onClick, reset, ...props} = {}) => {
+  return {
+    onClick: () => {
+      onClick && onClick()
+      reset()
+    },    ...props,
+  }
+}

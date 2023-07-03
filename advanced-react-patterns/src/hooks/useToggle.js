@@ -7,4 +7,4 @@ export const useToggle =() => {
       throw new Error(`useToggle must be used within a ToggleProvider`)
     }
     return context
-  }
+}
