@@ -8,3 +8,15 @@ export const updateUser = (dispatch, user, updates) => {
       error => dispatch({type: 'fail update', error}),
     )
   }
+
+
+export const getTogglerProps = ({onClick, isOn, toggle, ...props} = {}) => {
+  return {
+    'aria-pressed': isOn,
+    onClick: () => {
+      onClick && onClick()
+      toggle()
+    },
+    ...props,
+  }
+}
