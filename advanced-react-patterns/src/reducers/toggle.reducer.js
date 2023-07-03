@@ -1,5 +1,5 @@
 // If using TS this is unnecessary
-const actionTypes = {
+export const actionTypes = {
     toggle: 'toggle',
     reset: 'reset',
   }
