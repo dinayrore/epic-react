@@ -14,5 +14,6 @@ export const Toggle = ({children}) => {
         if (allowedTypes.includes(child.type)) {
         return React.cloneElement(child, {isOn, toggle})
         }
-    })  
+    })
+  
 }

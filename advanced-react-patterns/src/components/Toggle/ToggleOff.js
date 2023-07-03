@@ -1,3 +1,7 @@
-// Accepts `on` and `children` props and returns `children` if `on` is false
-export const ToggleOff = ({isOn, children}) => (isOn ? null : children)
+import { useToggle } from "../../hooks/useToggle"
+
+export const ToggleOff = ({children}) => {
+    const {isOn} = useToggle()
+    return (isOn ? null : children)
+}
 
