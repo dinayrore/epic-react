@@ -30,6 +30,7 @@ function App() {
       <Toggle>
         <ToggleOn>The button is on</ToggleOn>
         <ToggleOff>The button is off</ToggleOff>
+        <span></span>
         <ToggleButton />
       </Toggle>
     </div>
