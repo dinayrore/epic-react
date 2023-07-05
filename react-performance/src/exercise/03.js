@@ -4,7 +4,7 @@
 import * as React from 'react'
 import {useCombobox} from '../use-combobox'
 import {getItems} from '../workerized-filter-cities'
-import {useAsync, useForceRerender} from '../utils'
+import {useAsync, useForceRerender, customComparator} from '../utils'
 
 function Menu({
   items,
@@ -21,8 +21,11 @@ function Menu({
           getItemProps={getItemProps}
           item={item}
           index={index}
-          selectedItem={selectedItem}
-          highlightedIndex={highlightedIndex}
+          // 💯 primitive values
+          // instead of calculating this logic in the ListItem component, we can pass
+          // the primitive values and let the ListItem component handle the logic sent 
+          isSelected={selectedItem?.id === item.id}
+          isHighlighted={highlightedIndex === index}
         >
           {item.name}
         </ListItem>
@@ -31,17 +34,17 @@ function Menu({
   )
 }
 // 🐨 Memoize the Menu here using React.memo
+Menu = React.memo(Menu)
 
 function ListItem({
   getItemProps,
   item,
   index,
-  selectedItem,
-  highlightedIndex,
+  isSelected,
+  isHighlighted,
   ...props
 }) {
-  const isSelected = selectedItem?.id === item.id
-  const isHighlighted = highlightedIndex === index
+
   return (
     <li
       {...getItemProps({
@@ -57,6 +60,10 @@ function ListItem({
   )
 }
 // 🐨 Memoize the ListItem here using React.memo
+ListItem = React.memo(ListItem, (previousProps, nextProps) => {
+  // 💯 custom comparator 
+  customComparator(previousProps, nextProps)
+})
 
 function App() {
   const forceRerender = useForceRerender()

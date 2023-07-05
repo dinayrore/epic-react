@@ -198,6 +198,23 @@ function updateGridCellState(grid, {row, column}) {
   })
 }
 
+const customComparator = (previousProps, nextProps) => {
+  // trigger a re-render if any of these conditions change
+  if (previousProps.getItemProps !== nextProps.getItemProps) return false
+  if (previousProps.item !== nextProps.item) return false
+  if (previousProps.index !== nextProps.index) return false
+  if (previousProps.selectedItem !== nextProps.selectedItem) return false
+
+  // If an item was highlighted before and is still highlighted, don't re-render
+  // If an item wasn't highlighted before and is now highlighted, don't re-render
+  if (previousProps.highlightedIndex !== nextProps.highlightedIndex) {
+    const wasPrevHighlighted = previousProps.highlightedIndex === previousProps.index
+    const isNowHighlighted = nextProps.highlightedIndex === nextProps.index
+    return wasPrevHighlighted === isNowHighlighted
+  }
+  return true
+}
+
 export {
   useAsync,
   useForceRerender,
@@ -206,4 +223,5 @@ export {
   AppGrid,
   updateGridState,
   updateGridCellState,
+  customComparator
 }
