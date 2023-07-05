@@ -8,7 +8,6 @@
  
  export const AppProvider = ({children}) => {
     const [state, dispatch] = useReducer(appReducer, {
-      dogName: '',
       grid: initialGrid,
     })
   

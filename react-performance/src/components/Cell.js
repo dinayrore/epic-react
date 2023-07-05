@@ -1,5 +1,16 @@
 import {useAppState, useAppDispatch} from '../hooks/useApp'
-import { memo } from "react"
+import { memo, forwardRef } from "react"
+
+// 💯 Slice of App State
+const withStateSlice =(Component, slice) => {
+  const MemoComp = memo(Component)
+  function Wrapper(props, ref) {
+    const state = useAppState()
+    return <MemoComp ref={ref} state={slice(state, props)} {...props} />
+  }
+  Wrapper.displayName = `withStateSlice(${Component.displayName || Component.name})`
+  return memo(forwardRef(Wrapper))
+}
 
 const CellComponent = ({row, column}) => {
     const state = useAppState()
@@ -19,4 +30,4 @@ const CellComponent = ({row, column}) => {
       </button>
     )
   }
-  export const Cell = memo(CellComponent)
+  export const Cell = withStateSlice(CellComponent, (state, {row, column}) => state.grid[row][column])

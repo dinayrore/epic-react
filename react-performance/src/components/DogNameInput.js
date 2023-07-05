@@ -1,9 +1,8 @@
-import { useAppDispatch, useAppState } from "../hooks/useApp"
+import { useDogState } from "../hooks/useDogState"
 
 export const DogNameInput = () => {
-    const state = useAppState()
-    const dispatch = useAppDispatch()
-    const {dogName} = state
+  const [state, dispatch] = useDogState()
+  const {dogName} = state
 
   
     function handleChange(event) {
