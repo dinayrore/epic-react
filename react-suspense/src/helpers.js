@@ -1,3 +1,5 @@
+import { fetchPokemon } from "pokemon"
+
 // 💯 generic createResource
 export const createResource = (promise) => {
     let status = 'pending'
@@ -18,4 +20,20 @@ export const createResource = (promise) => {
         if (status === 'success') return result
       },
     }
+  }
+
+  const pokemonResourceCache = {}
+
+  export const createPokemonResource = (pokemonName) => {
+    return createResource(fetchPokemon(pokemonName))
+  }
+
+  export const getPokemonResource = (pokemonName) => {
+    const lowerCasedName = pokemonName.toLowerCase()
+    let resource = pokemonResourceCache[lowerCasedName]
+    if (!resource) {
+      resource = createPokemonResource(lowerCasedName)
+      pokemonResourceCache[lowerCasedName] = resource
+    }
+    return resource
   }
