@@ -1,7 +1,9 @@
+
+import React from "react"
 import { PokemonResourceCacheContext } from "./pokemon-resource-cache.context"
 import { createPokemonResource } from "./pokemon-resource-cache.utils"
 
-const PokemonCacheProvider = ({children}) => {
+export const PokemonCacheProvider = ({children}) => {
     const cache = React.useRef({})
   
     const getPokemonResource = React.useCallback(name => {
