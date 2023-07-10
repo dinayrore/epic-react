@@ -37,3 +37,9 @@ export const createResource = (promise) => {
     }
     return resource
   }
+
+  export const SUSPENSE_CONFIG = {
+    timeoutMs: 4000,
+    busyDelayMs: 300,
+    busyMinDurationMs: 700,
+  }
