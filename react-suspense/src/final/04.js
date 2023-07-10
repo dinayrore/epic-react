@@ -10,6 +10,7 @@ import {
   PokemonErrorBoundary,
 } from '../pokemon'
 import {createResource} from '../utils'
+import { PokemonCacheProvider } from 'context/pokemon-resource-cache/pokemon-resource-cache.provider'
 
 function PokemonInfo({pokemonResource}) {
   const pokemon = pokemonResource.read()
@@ -69,25 +70,27 @@ function App() {
   }
 
   return (
-    <div className="pokemon-info-app">
-      <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
-      <hr />
-      <div className={`pokemon-info ${isPending ? 'pokemon-loading' : ''}`}>
-        {pokemonResource ? (
-          <PokemonErrorBoundary
-            onReset={handleReset}
-            resetKeys={[pokemonResource]}
-          >
-            <React.Suspense
-              fallback={<PokemonInfoFallback name={pokemonName} />}
+      <div className="pokemon-info-app">
+      <PokemonCacheProvider>
+        <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
+        <hr />
+        <div className={`pokemon-info ${isPending ? 'pokemon-loading' : ''}`}>
+          {pokemonResource ? (
+            <PokemonErrorBoundary
+              onReset={handleReset}
+              resetKeys={[pokemonResource]}
             >
-              <PokemonInfo pokemonResource={pokemonResource} />
-            </React.Suspense>
-          </PokemonErrorBoundary>
-        ) : (
-          'Submit a pokemon'
-        )}
-      </div>
+              <React.Suspense
+                fallback={<PokemonInfoFallback name={pokemonName} />}
+              >
+                <PokemonInfo pokemonResource={pokemonResource} />
+              </React.Suspense>
+            </PokemonErrorBoundary>
+          ) : (
+            'Submit a pokemon'
+          )}
+        </div>
+      </PokemonCacheProvider>
     </div>
   )
 }
