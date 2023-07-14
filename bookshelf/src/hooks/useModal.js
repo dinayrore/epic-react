@@ -1,11 +1,10 @@
-import {useState} from 'react'
+import {useContext} from 'react'
+import {ModalContext} from '../contexts/modal/modal.context'
 
 export const useModal = () => {
-    // @reach/dialog modal component uses none for false state
-    const [openModal, setOpenModal] = useState('none')
-    
-    return {
-        openModal,
-        setOpenModal
+    const context = useContext(ModalContext)
+    if (context === undefined) {
+      throw new Error(`useModal must be used within a ModalProvider`)
     }
+    return context
 }
