@@ -3,7 +3,8 @@ import {jsx} from '@emotion/core'
 
 import * as React from 'react'
 import * as auth from 'auth-provider'
-import {BrowserRouter} from 'react-router-dom'
+import {BrowserRouter as Router} from 'react-router-dom'
+// 🐨 you'll need the queryCache from react-query
 import {FullPageSpinner} from './components/lib'
 import * as colors from './styles/colors'
 import {client} from './utils/api-client'
@@ -43,6 +44,7 @@ function App() {
   const register = form => auth.register(form).then(user => setData(user))
   const logout = () => {
     auth.logout()
+    // 🐨 clear the query cache with queryCache.clear()
     setData(null)
   }
 
@@ -71,9 +73,9 @@ function App() {
   if (isSuccess) {
     const props = {user, login, register, logout}
     return user ? (
-      <BrowserRouter>
-           <AuthenticatedApp {...props} />
-      </BrowserRouter>
+      <Router>
+        <AuthenticatedApp {...props} />
+      </Router>
     ) : (
       <UnauthenticatedApp {...props} />
     )
