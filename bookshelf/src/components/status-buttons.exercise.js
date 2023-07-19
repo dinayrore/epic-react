@@ -9,14 +9,17 @@ import {
   FaBook,
   FaTimesCircle,
 } from 'react-icons/fa'
+
 import Tooltip from '@reach/tooltip'
-import {useAsync} from 'utils/hooks'
+import {
+  useListItem,
+  useUpdateListItem,
+  useCreateListItem,
+  useRemoveListItem,
+} from 'utils/list-items'
 import * as colors from 'styles/colors'
+import {useAsync} from 'utils/hooks'
 import {CircleButton, Spinner} from './lib'
-import useListItem from 'hooks/useListItem'
-import useUpdateListItem from 'hooks/useUpdateListItem'
-import useRemoveListItem from 'hooks/useRemoveListItem'
-import useCreateListItem from 'hooks/useCreateListItem'
 
 function TooltipButton({label, highlight, onClick, icon, ...rest}) {
   const {isLoading, isError, error, run} = useAsync()
@@ -49,12 +52,11 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
   )
 }
 
-function StatusButtons({user, book}) {
-  const listItem = useListItem(user, book.id)
-  
-  const [update] = useUpdateListItem(user, {throwOnError: true})
-  const [remove] = useRemoveListItem(user, {throwOnError: true})
-  const [create] = useCreateListItem(user, {throwOnError: true})
+function StatusButtons({ book}) {
+  const listItem = useListItem(book.id)
+  const [update] = useUpdateListItem({throwOnError: true})
+  const [remove] = useRemoveListItem({throwOnError: true})
+  const [create] = useCreateListItem({throwOnError: true})
 
   return (
     <React.Fragment>
@@ -63,7 +65,6 @@ function StatusButtons({user, book}) {
           <TooltipButton
             label="Unmark as read"
             highlight={colors.yellow}
-            // 🐨 add an onClick here that calls update with the data we want to update
             onClick={() => update({id: listItem.id, finishDate: null})}
             icon={<FaBook />}
           />
@@ -71,7 +72,6 @@ function StatusButtons({user, book}) {
           <TooltipButton
             label="Mark as read"
             highlight={colors.green}
-            // 🐨 add an onClick here that calls update with the data we want to update
             onClick={() => update({id: listItem.id, finishDate: Date.now()})}
             icon={<FaCheckCircle />}
           />
@@ -81,7 +81,6 @@ function StatusButtons({user, book}) {
         <TooltipButton
           label="Remove from list"
           highlight={colors.danger}
-          // 🐨 add an onClick here that calls remove
           onClick={() => remove({id: listItem.id})}
           icon={<FaMinusCircle />}
         />
@@ -89,7 +88,6 @@ function StatusButtons({user, book}) {
         <TooltipButton
           label="Add to list"
           highlight={colors.indigo}
-          // 🐨 add an onClick here that calls create
           onClick={() => create({bookId: book.id})}
           icon={<FaPlusCircle />}
         />

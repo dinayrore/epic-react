@@ -1,30 +1,28 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
 
-import React, {useEffect} from 'react'
+import * as React from 'react'
 import Tooltip from '@reach/tooltip'
 import {FaSearch, FaTimes} from 'react-icons/fa'
+import {useBookSearch} from 'utils/books'
 import * as colors from 'styles/colors'
 import {BookRow} from 'components/book-row'
 import {BookListUL, Spinner, Input} from 'components/lib'
-import useBookSearch from 'hooks/useBookSearch'
-import { refetchBookSearchQuery } from 'utils/refetch-book-search-query'
+import { useRefetchBookSearchQuery } from 'hooks/useRefetchBookSearchQuery'
 
-function DiscoverBooksScreen({user}) {
+function DiscoverBooksScreen() {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState(false)
-  // 🐨 replace this useAsync call with a useQuery call to handle the book search
-  const {
-    books,
-    error,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useBookSearch(query, user)
+  const {books, error, status} = useBookSearch(query)
+  // 🐨 use the new useRefetchBookSearchQuery to get the
+const refetchBookSearchQuery = useRefetchBookSearchQuery()
+  React.useEffect(() => {
+    return () => refetchBookSearchQuery()
+  }, [refetchBookSearchQuery])
 
-  useEffect(()=> {
-    return () => refetchBookSearchQuery(user)
-  }, [user])
+  const isLoading = status === 'loading'
+  const isSuccess = status === 'success'
+  const isError = status === 'error'
 
   function handleSearchSubmit(event) {
     event.preventDefault()
@@ -93,7 +91,10 @@ function DiscoverBooksScreen({user}) {
           <BookListUL css={{marginTop: 20}}>
             {books.map(book => (
               <li key={book.id} aria-label={book.title}>
-                <BookRow user={user} key={book.id} book={book} />
+                <BookRow
+                  key={book.id}
+                  book={book}
+                />
               </li>
             ))}
           </BookListUL>

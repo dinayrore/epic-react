@@ -1,22 +1,16 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
 
+import {useListItems} from 'utils/list-items'
 import {BookListUL} from './lib'
 import {BookRow} from './book-row'
-import useListItems from 'hooks/useListItems'
 
-function ListItemList({
-  user,
-  filterListItems,
-  noListItems,
-  noFilteredListItems,
-}) {
+function ListItemList({filterListItems, noListItems, noFilteredListItems}) {
+  const listItems = useListItems()
 
-  const listItems = useListItems(user)
+  const filteredListItems = listItems.filter(filterListItems)
 
-  const filteredListItems = listItems?.filter(filterListItems)
-
-  if (!listItems?.length) {
+  if (!listItems.length) {
     return <div css={{marginTop: '1em', fontSize: '1.2em'}}>{noListItems}</div>
   }
   if (!filteredListItems.length) {
@@ -31,7 +25,7 @@ function ListItemList({
     <BookListUL>
       {filteredListItems.map(listItem => (
         <li key={listItem.id}>
-          <BookRow user={user} book={listItem.book} />
+          <BookRow book={listItem.book} />
         </li>
       ))}
     </BookListUL>

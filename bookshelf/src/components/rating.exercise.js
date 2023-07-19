@@ -2,8 +2,8 @@
 import {jsx} from '@emotion/core'
 
 import * as React from 'react'
+import {useUpdateListItem} from 'utils/list-items'
 import {FaStar} from 'react-icons/fa'
-import useUpdateListItem from 'hooks/useUpdateListItem'
 import * as colors from 'styles/colors'
 import {ErrorMessage} from 'components/lib'
 
@@ -17,10 +17,9 @@ const visuallyHiddenCSS = {
   position: 'absolute',
   width: '1px',
 }
-
-function Rating({listItem, user}) {
+function Rating({listItem}) {
   const [isTabbing, setIsTabbing] = React.useState(false)
-  const [update, {error, isError}] = useUpdateListItem(user)
+  const [update, {error, isError}] = useUpdateListItem()
 
   React.useEffect(() => {
     function handleKeyDown(event) {

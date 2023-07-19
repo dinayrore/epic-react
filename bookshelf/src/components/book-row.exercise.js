@@ -2,21 +2,16 @@
 import {jsx} from '@emotion/core'
 
 import {Link} from 'react-router-dom'
+import {useListItem} from 'utils/list-items'
 import * as mq from 'styles/media-queries'
 import * as colors from 'styles/colors'
 import {StatusButtons} from './status-buttons'
 import {Rating} from './rating'
-import useListItem  from 'hooks/useListItem'
 
-function BookRow({user, book}) {
+function BookRow({book}) {
   const {title, author, coverImageUrl} = book
 
-  // 🐨 call useQuery here to get the list item
-  // queryKey should be 'list-items'
-  // queryFn should be a call to the list-items endpoint
-
-  // 🐨 assign listItem to the list item that has the same bookId as the book.id
-  const listItem = useListItem(user, book.id)
+  const listItem = useListItem(book.id)
 
   const id = `book-row-book-${book.id}`
 
@@ -77,7 +72,9 @@ function BookRow({user, book}) {
                 {title}
               </h2>
               {listItem?.finishDate ? (
-                <Rating user={user} listItem={listItem} />
+                <Rating
+                  listItem={listItem}
+                />
               ) : null}
             </div>
             <div css={{marginLeft: 10}}>
@@ -110,7 +107,9 @@ function BookRow({user, book}) {
           height: '100%',
         }}
       >
-        <StatusButtons user={user} book={book} />
+        <StatusButtons
+          book={book}
+        />
       </div>
     </div>
   )
