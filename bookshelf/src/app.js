@@ -2,8 +2,5 @@
 
 export * from './app.exercise'
 
-// 💯 create an `AuthProvider` component
-// export * from './app.extra-2'
-
-// 💯 colocate global providers
-// export * from './app.extra-3'
+// 💯 Prefetch the Authenticated App
+// export * from './app.extra-1'

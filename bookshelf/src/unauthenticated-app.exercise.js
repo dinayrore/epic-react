@@ -5,7 +5,7 @@ import * as React from 'react'
 import {Input, Button, Spinner, FormGroup, ErrorMessage} from './components/lib'
 import {Modal, ModalContents, ModalOpenButton} from './components/modal'
 import {Logo} from './components/logo'
-// 🐨 get AuthContext from ./context/auth-context
+import {useAuth} from './context/auth-context'
 import {useAsync} from './utils/hooks'
 
 function LoginForm({onSubmit, submitButton}) {
@@ -59,10 +59,8 @@ function LoginForm({onSubmit, submitButton}) {
   )
 }
 
-// you'll no longer receive the login and register functions as props
-// 💣 remove the props
-function UnauthenticatedApp({login, register}) {
-  // 🐨 get login and register from the AuthContext using useContext
+function UnauthenticatedApp() {
+  const {login, register} = useAuth()
   return (
     <div
       css={{
@@ -110,4 +108,9 @@ function UnauthenticatedApp({login, register}) {
   )
 }
 
+// 🐨 change this to a default export
 export {UnauthenticatedApp}
+
+// 🐨 Unfortunately, to make this work for our workshop,
+// you need to add this to src/unauthenticated-app.js:
+// export {default} from './unauthenticated-app.exercise'

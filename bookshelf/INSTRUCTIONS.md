@@ -1,4 +1,4 @@
-# Context
+# Performance
 
 ## 📝 Your Notes
 
@@ -6,173 +6,173 @@ Elaborate on your learnings here in `INSTRUCTIONS.md`
 
 ## Background
 
-Once we've got all our server cache state inside `react-query`, there's not a
-whole lot of global state left in our application that can't be easily managed
-via a combination of React state, composition, and lifting state.
+One of the most common performance problems web applications face is initial
+page load. As the application grows, the size of the JavaScript bundle grows as
+well. With every feature, you add more dependencies and your own code to the
+size of the JavaScript bundle you're sending to users.
 
-That said, there are definitely still scenarios where having some UI state
-that's globally available through context would be valuable. Things like
-application "toast" notifications, user authentication state, or modal and focus
-management can all benefit from the coordination and freedom from
-[Prop Drilling](https://kentcdodds.com/blog/prop-drilling) that a single global
-provider could provide.
+This has adverse performance affects because it takes longer to send that data
+over the internet and it also takes more time for the browser to process that
+data (for example: to parse and run the JavaScript).
 
-📜 For a refresher on the APIs we'll be using:
+But no matter how big your application grows, it's unlikely the user needs
+_everything_ your application can do on the page at the same time. So if instead
+we split the application code and assets into logical "chunks" then we could
+load only the chunks necessary for what the user wants to do right now.
 
-- https://reactjs.org/docs/hooks-reference.html#usecontext
+This is called "Code splitting".
+
+📜 Here are some relevant docs from React
+
+- [Code-splitting in the React Docs](https://reactjs.org/docs/code-splitting.html)
+
+This optimization is intended to improve what's called the
+["Time to First Meaningful Paint"](https://web.dev/first-meaningful-paint/). The
+sooner users can see the content they're coming for, the better and this is a
+metric for measuring this.
 
 ## Exercise
 
 Production deploys:
 
-- [Exercise](https://exercises-07-context.bookshelf.lol/exercise)
-- [Final](https://exercises-07-context.bookshelf.lol/)
+- [Exercise](https://exercises-09-performance.bookshelf.lol/exercise)
+- [Final](https://exercises-09-performance.bookshelf.lol/)
 
-In this exercise, rather than passing the `user` object and the `login`,
-`register`, and `logout` functions as props to the `AuthenticatedApp` and the
-`UnauthenticatedApp`, we're going to put those values in an
-`AuthContext.Provider` value and then those components will get the things they
-need from context.
+This exercise is all about improving the time to first meaningful paint. Our app
+is pretty small as it is, so some of our optimizations might be a little
+overkill. We're already scoring 99/100 on our
+[Lighthouse](https://developers.google.com/web/tools/lighthouse) score, but in
+medium-to-large size apps, these changes will make much more significant and
+valuable impacts on the performance of your application in production.
+
+In fact, with an app as small as this, it's hard to get measurements indicating
+that we've improved things at all, so the optimizations we'll do in this
+exercise should really only be applied to larger apps. As always: measure before
+and after and choose the faster one!
+
+👨‍💼 We're having people close the browser before our login page finishes loading!
+We need the login page to load faster!
+
+We have two parts of our app, the authenticated side, and the unauthenticated
+side. The users who are coming to the unauthenticated app are loading everything
+in the app even though they're not using it all.
+
+So your job is to implement "Code Splitting" so we lazily load the Authenticated
+app so users don't have to pay the cost for the authenticated app until they've
+actually logged in.
+
+> 💰 Remember, `React.lazy` expects the module you're importing to export a
+> React component as the default export. So you'll need to update those exports.
+> Also, due to the way we're structuring the exercises, you'll also need to
+> update the "main" module that's re-exporting things. So you'll make a change
+> to `src/authenticated-app.exercise.js` as well as `src/authenticated-app.js`!
 
 ### Files
 
-- `src/context/auth-context.js`
 - `src/app.js`
-- `src/utils/list-items.js`
-- `src/utils/books.js`
-- `src/components/list-item-list.js`
-- `src/components/status-buttons.js`
-- `src/components/rating.js`
-- `src/components/book-row.js`
-- `src/screens/reading-list.js`
-- `src/screens/finished.js`
-- `src/screens/book.js`
-- `src/screens/discover.js`
 - `src/authenticated-app.js`
 - `src/unauthenticated-app.js`
 
 ## Extra Credit
 
-### 1. 💯 create a `useAuth` hook
+### 1. 💯 Prefetch the Authenticated App
 
-[Production deploy](https://exercises-07-context.bookshelf.lol/extra-1)
+[Production deploy](https://exercises-09-performance.bookshelf.lol/extra-1)
 
-It's annoying to have to pass the `AuthContext` around to `React.useContext` and
-if someone were to accidentally use `React.useContext(AuthContext)` without
-rendering `AuthContext.Provider`, they would get a pretty unhelpful error
-message about not being able to destructure `undefined`.
+When the user lands on the login screen, it's really likely they'll want to load
+the regular app, so go ahead and use
+[webpack magic comments](https://webpack.js.org/api/module-methods/#magic-comments)
+to prefetch the authenticated app module.
 
-Create a `useAuth` custom hook that consumes the `AuthContext` from
-`React.useContext`. This can be as simple as
-`const useAuth = () => React.useContext(AuthContext)` but if you want to add a
-little extra protection to ensure people only use it within a provider then you
-can do that.
+This will reduce the amount of time it takes to render the authenticated app
+once the user logs in because the code will be pre-loaded, but the user won't
+have to wait for that code to download before they can use the login screen.
 
 **Files:**
 
-- `src/context/auth-context.js`
-- `src/authenticated-app.js`
-- `src/unauthenticated-app.js`
-- `src/utils/books.js`
-- `src/utils/list-items.js`
-
-### 2. 💯 create an `AuthProvider` component
-
-[Production deploy](https://exercises-07-context.bookshelf.lol/extra-2)
-
-Rendering providers in regular application code is fine, but one nice way to
-create a logical separation of concerns (which will help with maintainability)
-is to create a component who's sole purpose is to manage and provide the
-authentication state. So for this extra credit, you need to create an
-`AuthProvider` component. Most of the code for this component will be moved from
-the `src/app.js` module and you'll move it to the `src/context/auth-context.js`
-module.
-
-In that module, create an `AuthProvider` component that renders the
-`AuthContext.Provider` Copy most of the code from the `App` component in the
-`src/app.js` module and make sure that the `value` you pass to the provider is:
-`{user, login, register, logout}`
-
-Don't forget to export the `AuthProvider` component along with the `useAuth`
-hook. And you don't need to export the `AuthContext` anymore!
-
-**Files:**
-
-- `src/context/auth-context.js`
 - `src/app.js`
-- `src/index.js` (this is where you'll render the `AuthProvider`)
 
-### 3. 💯 colocate global providers
+### 2. 💯 Memoize context
 
-[Production deploy](https://exercises-07-context.bookshelf.lol/extra-3)
+[Production deploy](https://exercises-09-performance.bookshelf.lol/extra-2)
 
-Typically in applications, you'll have several context providers that are global
-or near-global. Most of the time, it's harmless to just make them all global and
-create a single provider component that brings them all together. In addition to
-general "cleanup", this can help make testing easier.
+If a context provider re-renders with a different `value` from the previous
+render, all consumers will re-render. When writing idiomatic context provider
+components which are rendered globally in your app, you can take advantage of
+[this built-in optimization](https://kentcdodds.com/blog/optimize-react-re-renders),
+and the only time the provider re-renders is when the state actually changes
+(which is when you _want_ consumers to re-render anyway).
 
-Inside the `src/context/index.js` module create an `AppProviders` component
-that:
+However, it's often a good idea to memoize the functions we expose through
+context so those functions can be passed into dependency arrays. And we'll
+memoize the context value as well.
 
-- accepts a `children` prop
-- renders all the context providers for our app:
-  - `ReactQueryConfigProvider` <-- get that from the `src/index.js` module
-  - `Router` <-- get that from the `src/app.js` module
-  - `AuthProvider` <-- you should have created that in
-    `src/context/auth-context.js`
-- Pass the children along to the last provider
+**Files:**
 
-💰 Here's how it'll look:
+- `src/context/auth-context.js`
+
+### 3. 💯 Production Monitoring
+
+[Production deploy](https://exercises-09-performance.bookshelf.lol/extra-3)
+
+We want to be able to monitor the application performance in production so we
+can be notified if there's a huge spike in performance issues. There's a small
+performance penalty cost for this so we have modify how the app is built so it
+includes the React profiling tools, but having the information is often worth
+the cost. Facebook actually will only serve the profiling-enabled build of their
+app to a subset of users and that's something that you might consider when
+adding this to your own app.
+
+Because we're using `react-scripts` (thanks to create-react-app), we can use the
+`--profile` flag to enable building for production with the profiling
+information enabled. In fact, we're already doing this, but I wanted to make
+sure you don't miss that step. For more information on this, read
+[Profile a React App for Performance](https://kentcdodds.com/blog/profile-a-react-app-for-performance).
+
+With that in place, we can now tell React where we want to start collecting
+performance information. We're going to be using React's
+[`<Profiler />`](https://reactjs.org/docs/profiler.html) component to do this
+performance measuring and reporting. You'll want to send the data for the
+profile in a `POST` request to `/profile` (`client('profile', {body: data}))`).
+Note that it is not necessary to send a `token` because this is not an
+authenticated request (because we want this to happen for unauthenticated users
+too).
+
+There are lots of ways to go about doing this and you can feel free to do this
+however you like, but in my finished example, I created a component with the
+following API:
 
 ```javascript
-function AppProviders({children}) {
-  return (
-    <Provider1>
-      <Provider2>
-        <Provider3>{children}</Provider3>
-      </Provider2>
-    </Provider1>
-  )
-}
+<Profiler id="Unique Identifier" metadata={{extra: 'info for the report'}}>
+  <Components />
+  <To />
+  <Be />
+  <Profiled />
+</Profiler>
 ```
 
-Don't forget to `export {AppProviders}`
+Then the `Profiler` will be responsible for sending the profile data that we get
+from React to the `/profile` endpoint.
+
+There are various places where this information might be useful. You can feel
+free to add it wherever you like.
 
 **Files:**
 
+- `src/components/profiler.js`
 - `src/index.js`
-- `src/context/index.js`
-- `src/app.js`
+- `src/components/list-item-list.js`
+- `src/screens/book.js`
+- `src/screens/discover.js`
 
-### 4. 💯 create a `useClient` hook
+... 4. 💯 Add interaction tracing
 
-[Production deploy](https://exercises-07-context.bookshelf.lol/extra-4)
-
-There's a bit of duplication in our custom react-query hooks. Each one has to
-get the user, and then they use the user to get the token which they then pass
-to the client. But I think it would be better to have a hook that gives us an
-authenticated client instead. So basically, a hook that gives us a memoized
-version of:
-
-```javascript
-// token comes from useAuth().user.token
-function authenticatedClient(endpoint, config) {
-  return client(endpoint, {...config, token})
-}
-```
-
-So create a `useClient` hook, and then use it wherever code attempts to make
-authenticated client calls.
-
-**Files:**
-
-- `src/context/auth-context.js`
-- `src/utils/list-items.js`
-- `src/utils/books.js`
+This API was removed from React, so we've deleted the video and exercise from
+this workshop. Learn more: https://github.com/facebook/react/issues/21285
 
 ## 🦉 Elaboration and Feedback
 
 After the instruction, if you want to remember what you've just learned, then
 fill out the elaboration and feedback form:
 
-https://ws.kcd.im/?ws=Build%20React%20Apps&e=07%3A%20Context&em=
+https://ws.kcd.im/?ws=Build%20React%20Apps&e=09%3A%20Performance&em=

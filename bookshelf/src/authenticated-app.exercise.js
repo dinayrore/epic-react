@@ -6,13 +6,12 @@ import {ErrorBoundary} from 'react-error-boundary'
 import {Button, ErrorMessage, FullPageErrorFallback} from './components/lib'
 import * as mq from './styles/media-queries'
 import * as colors from './styles/colors'
-// 🐨 get AuthContext from ./context/auth-context
+import {useAuth} from './context/auth-context'
 import {ReadingListScreen} from './screens/reading-list'
 import {FinishedScreen} from './screens/finished'
 import {DiscoverBooksScreen} from './screens/discover'
 import {BookScreen} from './screens/book'
 import {NotFoundScreen} from './screens/not-found'
-import { useAuth } from 'hooks/useAuth'
 
 function ErrorFallback({error}) {
   return (
@@ -30,7 +29,6 @@ function ErrorFallback({error}) {
 }
 
 function AuthenticatedApp() {
-  // 🐨 get user and logout function from AuthContext using useContext
   const {user, logout} = useAuth()
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
@@ -69,10 +67,7 @@ function AuthenticatedApp() {
         </div>
         <main css={{width: '100%'}}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <AppRoutes
-              // 🐨 we no longer need to pass the user
-              user={user}
-            />
+            <AppRoutes />
           </ErrorBoundary>
         </main>
       </div>
@@ -115,7 +110,7 @@ function NavLink(props) {
   )
 }
 
-function Nav() {
+function Nav(params) {
   return (
     <nav
       css={{
@@ -162,4 +157,9 @@ function AppRoutes() {
   )
 }
 
-export {AuthenticatedApp}
+// 🐨 change this to a default export
+export default AuthenticatedApp
+
+// 🐨 Unfortunately, to make this work for our workshop,
+// you need to add this to src/authenticated-app.js:
+// export {default} from './authenticated-app.exercise'

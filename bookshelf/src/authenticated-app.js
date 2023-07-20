@@ -1,6 +1,5 @@
 // export * from './authenticated-app.final'
+// export {default} from './authenticated-app.final'
 
 export * from './authenticated-app.exercise'
-
-// 💯 create a `useAuth` hook
-// export * from './authenticated-app.extra-1'
+export {default} from './authenticated-app.exercise'
