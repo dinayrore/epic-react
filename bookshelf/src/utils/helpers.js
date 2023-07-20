@@ -1,18 +1,46 @@
-import {server, rest} from 'test/server'
-import { apiURL } from './api-client'
-
-export const endpoint = 'test-endpoint'
-
-export const customConfig = {
-  method: 'PUT',
-  headers: {'Content-Type': 'fake-type'},
-}
-
-export const testPostRequest = async (endpoint) => {
-   return server.use(
-        rest.post(`${apiURL}/${endpoint}`, async (req, res, ctx) => {
-          return res(ctx.json(req.body))
-        }),
-      )
-}
-
+export const deferred = () => {
+    let resolve, reject
+    const promise = new Promise((res, rej) => {
+      resolve = res
+      reject = rej
+    })
+    return {promise, resolve, reject}
+  }
+  
+  export const defaultState = {
+    status: 'idle',
+    data: null,
+    error: null,
+  
+    isIdle: true,
+    isLoading: false,
+    isError: false,
+    isSuccess: false,
+  
+    run: expect.any(Function),
+    reset: expect.any(Function),
+    setData: expect.any(Function),
+    setError: expect.any(Function),
+  }
+  
+  export const pendingState = {
+    ...defaultState,
+    status: 'pending',
+    isIdle: false,
+    isLoading: true,
+  }
+  
+  export const resolvedState = {
+    ...defaultState,
+    status: 'resolved',
+    isIdle: false,
+    isSuccess: true,
+  }
+  
+  export const rejectedState = {
+    ...defaultState,
+    status: 'rejected',
+    isIdle: false,
+    isError: true,
+  }
+  
